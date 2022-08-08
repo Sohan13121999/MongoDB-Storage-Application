@@ -11,11 +11,13 @@ import streamlit as st
 from PIL import Image
 import urllib
 
+from sympy import cot
+
 def CredentialsConnect():
     username=st.text_input("Enter Your Cluster UserName",key=1)
     password=st.text_input("Enter Your Cluster Password",key=2)
-    database=st.text_input("Enter your Cluster Name")
-    ConnectionURL=st.text_input("Enter your Connection URL(replace the <password> with your own password)",key=3)
+    
+    ConnectionURL=st.text_input("Enter your Connection URL",key=3)
     
 
 
@@ -48,7 +50,7 @@ def CredentialsConnect():
 
 
 
-if __name__ == '__main__':
+def fileupload():
     image=Image.open("logo.png")
     st.image(image,width=100)
     st.title("InfoSearcher")
@@ -67,8 +69,33 @@ if __name__ == '__main__':
                 reader=da.to_dict('records')
                 for i in reader:
                     coll.insert_one(i)
-            
-        pprint.pprint(coll.find_one({"Year":"2013"}))
+        return coll
+        
+        
+
+count=0
+
+
+if __name__=='__main__':
+    if count == 0:
+        Collection=fileupload()
+        count=count+1
+        st.write(count)
+
+    if Collection is not None:
+        st.text("")
+        button=st.checkbox("Want to find Your Data ?")
+        if button:
+            Header=st.text_input("Enter Your Header",key=13)
+            Data=st.text_input("Enter the Particular Data You Want to find",key=14)
+            x=Data.isnumeric()
+            if x==True:
+                Data= float(Data)
+            if Data:
+                st.sidebar.write(Collection.find_one({Header:Data}))
+
+
+
                 
             
         
